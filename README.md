@@ -64,3 +64,11 @@
 导入/导出：支持CSV、JSON格式
 数据备份：自动云备份/本地备份
 数据恢复：版本回滚功能
+
+
+用户视角
+<img width="2123" height="1334" alt="image" src="https://github.com/user-attachments/assets/69b4abe9-76d4-4dfc-b9fc-cf9a320201be" />
+管理员视角
+<img width="1881" height="1249" alt="image" src="https://github.com/user-attachments/assets/f476dfa5-9326-4806-a0ff-c5f60f1b2c5f" />
+
+
