@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务管理工具</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <h1><i class="fas fa-tasks"></i> 任务管理工具</h1>
+        <div class="header-actions">
+            <div id="authSection" class="auth-section">
+                <button class="btn btn-primary" onclick="openLoginModal()">登录</button>
+                <button class="btn btn-secondary" onclick="openRegisterModal()">注册</button>
+            </div>
+            <div id="userSection" class="user-section" style="display: none;">
+                <span>欢迎, <span id="userName"></span></span>
+                <button class="btn btn-outline" onclick="logout()">退出</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>总任务</h3>
+            <span id="totalTasks">0</span>
+        </div>
+        <div class="stat-card">
+            <h3>已完成</h3>
+            <span id="completedTasks">0</span>
+        </div>
+        <div class="stat-card">
+            <h3>完成率</h3>
+            <span id="completionRate">0%</span>
+        </div>
+        <div class="stat-card progress-card">
+            <div class="progress-bar">
+                <div id="completionProgress" class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索任务...">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="pending">待办</button>
+            <button class="filter-btn" data-filter="in_progress">进行中</button>
+            <button class="filter-btn" data-filter="completed">已完成</button>
+        </div>
+        <button class="btn btn-primary" onclick="openTaskModal()">
+            <i class="fas fa-plus"></i> 新建任务
+        </button>
+        <button class="btn btn-outline" onclick="openDebugModal()" title="数据库调试">
+            <i class="fas fa-database"></i> 数据库
+        </button>
+    </div>
+
+    <main class="main-content">
+        <div id="taskList" class="task-list">
+            <!-- 任务列表将通过 JavaScript 动态生成 -->
+        </div>
+    </main>
+</div>
+
+<!-- 通知容器 -->
+<div id="notifications" class="notifications"></div>
+
+<!-- 新建任务模态框 -->
+<div id="taskModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>新建任务</h2>
+            <button class="close-btn" onclick="closeModal('taskModal')">&times;</button>
+        </div>
+        <form id="taskForm">
+            <div class="form-group">
+                <label for="title">任务标题 *</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="description">任务描述</label>
+                <textarea id="description" name="description" rows="3"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="priority">优先级</label>
+                    <select id="priority" name="priority">
+                        <option value="low">低</option>
+                        <option value="medium" selected>中</option>
+                        <option value="high">高</option>
+                        <option value="urgent">紧急</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="due_date">截止日期</label>
+                    <input type="datetime-local" id="due_date" name="due_date">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="estimated_hours">预估耗时 (小时)</label>
+                <input type="number" id="estimated_hours" name="estimated_hours" step="0.5" min="0">
+            </div>
+            <div class="form-group">
+                <label for="tags">标签 (用逗号分隔)</label>
+                <input type="text" id="tags" name="tags" placeholder="工作,学习,重要">
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-outline" onclick="closeModal('taskModal')">取消</button>
+                <button type="submit" class="btn btn-primary">创建任务</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 登录模态框 -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>登录</h2>
+            <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginEmail">邮箱</label>
+                <input type="email" id="loginEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">密码</label>
+                <input type="password" id="loginPassword" name="password" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">登录</button>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <p>还没有账号？ <a href="#" onclick="closeModal('loginModal'); openRegisterModal()">立即注册</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- 注册模态框 -->
+<div id="registerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>注册</h2>
+            <button class="close-btn" onclick="closeModal('registerModal')">&times;</button>
+        </div>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="registerUsername">用户名</label>
+                <input type="text" id="registerUsername" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="registerEmail">邮箱</label>
+                <input type="email" id="registerEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="registerPassword">密码</label>
+                <input type="password" id="registerPassword" name="password" required minlength="6">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">注册</button>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <p>已有账号？ <a href="#" onclick="closeModal('registerModal'); openLoginModal()">立即登录</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- 管理员登录模态框 -->
+<div id="adminLoginModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>管理员登录</h2>
+            <button class="close-btn" onclick="closeModal('adminLoginModal')">&times;</button>
+        </div>
+        <form id="adminLoginForm">
+            <div class="form-group">
+                <label for="adminUsername">管理员账号</label>
+                <input type="text" id="adminUsername" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="adminPassword">密码</label>
+                <input type="password" id="adminPassword" name="password" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">管理员登录</button>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <p>默认管理员账号: admin / admin123</p>
+            <p>默认监督员账号: supervisor / super123</p>
+        </div>
+    </div>
+</div>
+
+<!-- 数据库调试模态框 -->
+<div id="debugModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h2>数据库调试信息</h2>
+            <button class="close-btn" onclick="closeModal('debugModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="debug-tabs">
+                <button class="debug-tab active" onclick="openDebugTab('stats')">统计信息</button>
+                <button class="debug-tab" onclick="openDebugTab('users')">用户数据</button>
+                <button class="debug-tab" onclick="openDebugTab('tasks')">任务数据</button>
+                <button class="debug-tab" onclick="openDebugTab('raw')">原始数据</button>
+            </div>
+
+            <div id="statsTab" class="debug-tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3>用户总数</h3>
+                        <span id="debugTotalUsers">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <h3>任务总数</h3>
+                        <span id="debugTotalTasks">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <h3>任务状态分布</h3>
+                        <div id="debugStatusDistribution"></div>
+                    </div>
+                    <div class="stat-item">
+                        <h3>任务优先级分布</h3>
+                        <div id="debugPriorityDistribution"></div>
+                    </div>
+                </div>
+
+                <h4>最近创建的任务</h4>
+                <div id="recentTasks" class="recent-tasks"></div>
+            </div>
+
+            <div id="usersTab" class="debug-tab-content">
+                <table class="debug-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>邮箱</th>
+                        <th>注册时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="tasksTab" class="debug-tab-content">
+                <div class="filter-controls">
+                    <select id="debugUserFilter" onchange="loadTasksData()">
+                        <option value="">所有用户</option>
+                    </select>
+                    <select id="debugStatusFilter" onchange="loadTasksData()">
+                        <option value="">所有状态</option>
+                        <option value="pending">待办</option>
+                        <option value="in_progress">进行中</option>
+                        <option value="completed">已完成</option>
+                        <option value="cancelled">已取消</option>
+                    </select>
+                </div>
+                <table class="debug-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>标题</th>
+                        <th>用户</th>
+                        <th>状态</th>
+                        <th>优先级</th>
+                        <th>截止时间</th>
+                        <th>创建时间</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tasksTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="rawTab" class="debug-tab-content">
+                <div class="raw-data-controls">
+                    <button class="btn btn-outline" onclick="loadRawData()">加载原始数据</button>
+                    <button class="btn btn-outline" onclick="copyRawData()">复制到剪贴板</button>
+                </div>
+                <pre id="rawData" class="raw-data"></pre>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <small>这些数据仅用于调试目的</small>
+        </div>
+    </div>
+</div>
+
+<!-- 管理员面板模态框 -->
+<div id="adminPanelModal" class="modal">
+    <div class="modal-content" style="max-width: 1200px; height: 90vh;">
+        <div class="modal-header">
+            <h2><i class="fas fa-crown"></i> 管理员面板</h2>
+            <button class="close-btn" onclick="closeModal('adminPanelModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="openAdminTab('dashboard')">仪表板</button>
+                <button class="admin-tab" onclick="openAdminTab('users')">用户管理</button>
+                <button class="admin-tab" onclick="openAdminTab('tasks')">任务管理</button>
+                <button class="admin-tab" onclick="openAdminTab('reports')">统计报告</button>
+            </div>
+
+            <!-- 管理员仪表板 -->
+            <div id="adminDashboardTab" class="admin-tab-content active">
+                <div class="admin-stats-grid">
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>总用户数</h3>
+                            <span id="adminTotalUsers">0</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>总任务数</h3>
+                            <span id="adminTotalTasks">0</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>活跃用户</h3>
+                            <span id="adminActiveUsers">0</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>完成率</h3>
+                            <span id="adminCompletionRate">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-charts">
+                    <div class="chart-container">
+                        <h4>任务状态分布</h4>
+                        <div id="adminStatusChart" class="chart"></div>
+                    </div>
+                    <div class="chart-container">
+                        <h4>任务优先级分布</h4>
+                        <div id="adminPriorityChart" class="chart"></div>
+                    </div>
+                </div>
+
+                <div class="admin-lists">
+                    <div class="list-container">
+                        <h4>最近注册用户</h4>
+                        <div id="recentUsersList" class="user-list"></div>
+                    </div>
+                    <div class="list-container">
+                        <h4>活跃用户排行</h4>
+                        <div id="topUsersList" class="user-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户管理 -->
+            <div id="adminUsersTab" class="admin-tab-content">
+                <div class="admin-toolbar">
+                    <div class="search-box">
+                        <input type="text" id="userSearch" placeholder="搜索用户...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <select id="userSort" onchange="loadAdminUsers()">
+                        <option value="created_at">按注册时间</option>
+                        <option value="task_count">按任务数量</option>
+                        <option value="username">按用户名</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>邮箱</th>
+                        <th>注册时间</th>
+                        <th>任务数</th>
+                        <th>完成率</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="adminUsersTable">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 任务管理 -->
+            <div id="adminTasksTab" class="admin-tab-content">
+                <div class="admin-toolbar">
+                    <div class="search-box">
+                        <input type="text" id="taskSearch" placeholder="搜索任务..." oninput="loadAdminTasks()">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <select id="taskUserFilter" onchange="loadAdminTasks()">
+                        <option value="">所有用户</option>
+                    </select>
+                    <select id="taskStatusFilter" onchange="loadAdminTasks()">
+                        <option value="">所有状态</option>
+                        <option value="pending">待办</option>
+                        <option value="in_progress">进行中</option>
+                        <option value="completed">已完成</option>
+                    </select>
+                    <select id="taskSort" onchange="loadAdminTasks()">
+                        <option value="created_at">创建时间</option>
+                        <option value="due_date">截止时间</option>
+                        <option value="title">标题</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>标题</th>
+                        <th>用户</th>
+                        <th>状态</th>
+                        <th>优先级</th>
+                        <th>截止时间</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="adminTasksTable">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 统计报告 -->
+            <div id="adminReportsTab" class="admin-tab-content">
+                <div class="report-controls">
+                    <button class="btn btn-primary" onclick="generateReport()">
+                        <i class="fas fa-download"></i> 生成报告
+                    </button>
+                </div>
+                <div id="systemReport" class="system-report">
+                    <!-- 报告内容将通过JavaScript生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
