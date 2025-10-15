@@ -1,6 +1,13 @@
 {
   "users": [
     {
+      "id": 1760516535005,
+      "username": "002",
+      "email": "002@qq.com",
+      "password_hash": "$2a$10$uIE4/lkjq/0z6Gd.2r0sXefrBTCjdj5GcnbnHBR6klFle03CH1r/a",
+      "created_at": "2025-10-15T08:22:14.811Z"
+    },
+    {
       "id": 1760441336973,
       "username": "001",
       "email": "001@qq.com",
@@ -72,6 +79,62 @@
       ],
       "user_id": 1760441336973,
       "completed_at": "2025-10-14T11:30:59.634Z"
+    },
+    {
+      "id": 1760516585115,
+      "status": "pending",
+      "created_at": "2025-10-15T08:23:04.667Z",
+      "updated_at": "2025-10-15T08:23:04.667Z",
+      "title": "健身",
+      "description": "下午四点",
+      "priority": "low",
+      "due_date": "2025-10-17T16:22",
+      "estimated_hours": 4,
+      "tags": [
+        "健身"
+      ],
+      "user_id": 1760516535005
+    },
+    {
+      "id": 1760516584910,
+      "status": "pending",
+      "created_at": "2025-10-15T08:23:04.670Z",
+      "updated_at": "2025-10-15T08:23:04.670Z",
+      "title": "健身",
+      "description": "下午四点",
+      "priority": "low",
+      "due_date": "2025-10-17T16:22",
+      "estimated_hours": 4,
+      "tags": [
+        "健身"
+      ],
+      "user_id": 1760516535005
+    },
+    {
+      "id": 1760516679069,
+      "status": "pending",
+      "created_at": "2025-10-15T08:24:38.947Z",
+      "updated_at": "2025-10-15T08:24:38.947Z",
+      "title": "啊",
+      "description": "啊",
+      "priority": "high",
+      "due_date": "2025-10-15T16:26",
+      "estimated_hours": 1,
+      "tags": [],
+      "user_id": 0
+    },
+    {
+      "id": 1760516679217,
+      "status": "pending",
+      "created_at": "2025-10-15T08:24:38.950Z",
+      "updated_at": "2025-10-15T08:24:38.950Z",
+      "title": "啊",
+      "description": "啊",
+      "priority": "high",
+      "due_date": "2025-10-15T16:26",
+      "estimated_hours": 1,
+      "tags": [],
+      "user_id": 0
     }
   ]
 }
