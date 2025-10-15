@@ -1,0 +1,77 @@
+{
+  "users": [
+    {
+      "id": 1760441336973,
+      "username": "001",
+      "email": "001@qq.com",
+      "password_hash": "$2a$10$n/JXEsH3FPudvJVpgq0Yqe1IJKrDYqTOb1uquh7IwA4uwM4IylMna",
+      "created_at": "2025-10-14T11:28:56.586Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1760441402021,
+      "status": "completed",
+      "created_at": "2025-10-14T11:30:01.858Z",
+      "updated_at": "2025-10-14T11:31:23.033Z",
+      "title": "web作业",
+      "description": "头歌作业",
+      "priority": "medium",
+      "due_date": "2025-10-15T19:29",
+      "estimated_hours": 2,
+      "tags": [
+        "学习"
+      ],
+      "user_id": 1760441336973,
+      "completed_at": "2025-10-14T11:31:23.033Z"
+    },
+    {
+      "id": 1760441402033,
+      "status": "completed",
+      "created_at": "2025-10-14T11:30:01.862Z",
+      "updated_at": "2025-10-14T12:07:38.687Z",
+      "title": "web作业",
+      "description": "头歌作业",
+      "priority": "medium",
+      "due_date": "2025-10-15T19:29",
+      "estimated_hours": 2,
+      "tags": [
+        "学习"
+      ],
+      "user_id": 1760441336973,
+      "completed_at": "2025-10-14T12:07:38.687Z"
+    },
+    {
+      "id": 1760441450011,
+      "status": "completed",
+      "created_at": "2025-10-14T11:30:49.660Z",
+      "updated_at": "2025-10-14T11:31:09.626Z",
+      "title": "算法设计",
+      "description": "头歌算法",
+      "priority": "medium",
+      "due_date": "2025-10-14T19:33",
+      "estimated_hours": 10,
+      "tags": [
+        "学习"
+      ],
+      "user_id": 1760441336973,
+      "completed_at": "2025-10-14T11:31:09.626Z"
+    },
+    {
+      "id": 1760441450514,
+      "status": "completed",
+      "created_at": "2025-10-14T11:30:49.663Z",
+      "updated_at": "2025-10-14T11:30:59.634Z",
+      "title": "算法设计",
+      "description": "头歌算法",
+      "priority": "medium",
+      "due_date": "2025-10-14T19:33",
+      "estimated_hours": 10,
+      "tags": [
+        "学习"
+      ],
+      "user_id": 1760441336973,
+      "completed_at": "2025-10-14T11:30:59.634Z"
+    }
+  ]
+}
